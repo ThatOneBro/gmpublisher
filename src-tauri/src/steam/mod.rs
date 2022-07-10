@@ -5,7 +5,7 @@ use std::{
 };
 
 use steamworks::{
-	Callback, CallbackHandle, Client, ClientManager, PublishedFileId, SingleClient, SteamId, SteamServerConnectFailure, SteamServersConnected,
+	Callback, CallbackHandle, Client, ClientManager, PublishedFileId, SingleClient, SteamId, SteamServersConnected,
 	SteamServersDisconnected,
 };
 

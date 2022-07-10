@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-pub fn invoke_handler() -> impl Fn(tauri::Invoke<crate::webview::Params>) + Send + Sync + 'static {
+pub fn invoke_handler() -> impl Fn(tauri::Invoke) + Send + Sync + 'static {
 	tauri::generate_handler![
 		check_dir,
 		check_file,

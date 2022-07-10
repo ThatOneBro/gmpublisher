@@ -30,15 +30,15 @@ pub fn bundler() -> bool {
 	let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target/release/bundle/macos/gmpublisher.app/Contents/MacOS/gmpublisher");
 	assert!(path.is_file());
 
-	Command::new("install_name_tool")
-		.arg("-change")
-		.arg("@loader_path/libsteam_api.dylib")
-		.arg("@executable_path/../Frameworks/libsteam_api.dylib")
-		.arg(path.as_os_str())
-		.stdout(Stdio::piped())
-		.stderr(Stdio::piped())
-		.output()
-		.expect("Failed to link Steamworks API for MacOS bundle");
+	// Command::new("install_name_tool")
+	// 	.arg("-change")
+	// 	.arg("@loader_path/libsteam_api.dylib")
+	// 	.arg("@executable_path/../libsteam_api.dylib")
+	// 	.arg(path.as_os_str())
+	// 	.stdout(Stdio::piped())
+	// 	.stderr(Stdio::piped())
+	// 	.output()
+	// 	.expect("Failed to link Steamworks API for MacOS bundle");
 
 	true
 }

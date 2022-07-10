@@ -1,9 +1,8 @@
 #![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")]
 #![feature(get_mut_unchecked)]
 
-use tauri::Manager;
-
-mod build;
+use tauri::{Manager, WindowBuilder};
+use tauri_plugin_log::{fern::colors::ColoredLevelConfig, LogTarget, LoggerBuilder};
 
 #[macro_use]
 extern crate lazy_static;
@@ -100,21 +99,26 @@ fn main() {
 
 	println!("Starting GUI...");
 
+	let colors = ColoredLevelConfig::default();
+	let targets = [LogTarget::Stdout];
+
 	tauri::Builder::default()
 		.create_window("gmpublisher".to_string(), tauri::WindowUrl::default(), |args, attrs| {
 			let settings = APP_DATA.settings.read();
 			(
-				args.with_title(format!("gmpublisher v{}", env!("CARGO_PKG_VERSION")))
-					.with_maximized(!cfg!(debug_assertions) && settings.window_maximized)
-					.with_resizable(true)
-					.with_inner_size(tauri::Size::Physical(tauri::PhysicalSize {
-						width: settings.window_size.0 as u32,
-						height: settings.window_size.1 as u32
-					}))
-					.with_min_inner_size(tauri::Size::Logical(tauri::LogicalSize {
-						width: 800.,
-						height: 600.
-					})),
+				args.title(format!("gmpublisher v{}", env!("CARGO_PKG_VERSION")))
+					.maximized(!cfg!(debug_assertions) && settings.window_maximized)
+					.resizable(true)
+					// .inner_size(tauri::Size::Physical(tauri::PhysicalSize {
+					// 	width: settings.window_size.0 as u32,
+					// 	height: settings.window_size.1 as u32
+					// }))
+					// .min_inner_size(tauri::Size::Logical(tauri::LogicalSize {
+					// 	width: 800.,
+					// 	height: 600.
+					// })),
+					.inner_size(settings.window_size.0 as f64, settings.window_size.1 as f64)
+					.min_inner_size(800.0 as f64, 600.0 as f64),
 				attrs,
 			)
 		})
@@ -124,7 +128,8 @@ fn main() {
 			Ok(())
 		})
 		.plugin(webview::ErrorReporter)
-		.plugin(appdata::Plugin)
+		.plugin(appdata::OurPlugin)
+		.plugin(LoggerBuilder::new().with_colors(colors).targets(targets).build())
 		.invoke_handler(commands::invoke_handler())
 		.run(tauri::generate_context!())
 		.unwrap();
